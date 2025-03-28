@@ -1,0 +1,119 @@
+plugins {
+    // Apply the Java plugin
+    id 'java'
+    // Apply the Spring Boot plugin
+    id 'org.springframework.boot' version '3.4.3'
+    // Apply the Spring dependency management plugin
+    id 'io.spring.dependency-management' version '1.1.7'
+    // Jacoco for test coverage
+    id 'jacoco'
+    // Spotless for code formatting
+    id 'com.diffplug.spotless' version '6.25.0'
+}
+
+group = 'com.paperlink'
+version = '0.1.0'
+sourceCompatibility = '17'
+
+java {
+    toolchain {
+        // Set the Java language version to 17
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+// Configuration for Spotless
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+// Define versions
+ext {
+    set('springAiVersion', "1.0.0-M6")
+    set('awsSdkVersion', "2.21.1")
+    set('openApiVersion', "2.8.5")
+}
+
+repositories {
+    // Use Maven Central repository
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot dependencies
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring AI dependencies
+    implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
+    implementation 'org.springframework.ai:spring-ai-pgvector-store-spring-boot-starter'
+    implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
+
+    // AWS dependencies
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter:3.0.3'
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.3'
+
+    // AWS SDK dependencies
+    implementation platform("software.amazon.awssdk:bom:${awsSdkVersion}")
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:lambda'
+
+    // Spring Retry
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework:spring-aspects'
+
+    // OpenAPI documentation
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
+
+    // Lombok for reducing boilerplate code
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Development-only dependencies
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    developmentOnly 'org.springframework.ai:spring-ai-spring-boot-docker-compose'
+
+    // Runtime dependencies
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Testing dependencies
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+    testImplementation 'com.h2database:h2'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
+}
+
+test {
+    // Use JUnit Platform for testing
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+// Task to create build information
+springBoot {
+    buildInfo()
+}
