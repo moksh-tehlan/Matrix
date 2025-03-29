@@ -31,8 +31,7 @@ public class SpringAiConfig {
 
         // Configure vector search request
         SearchRequest searchRequest = SearchRequest.builder()
-                .topK(3)
-                .similarityThreshold(0.7f)
+                .topK(5)
                 .build();
 
         return chatClientBuilder.defaultAdvisors(

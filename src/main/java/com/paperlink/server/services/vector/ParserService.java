@@ -1,12 +1,12 @@
-package com.paperlink.server.services;
+package com.paperlink.server.services.vector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paperlink.server.dtos.enums.ProcessingStatus;
 import com.paperlink.server.dtos.response.LambdaResponseDto;
 import com.paperlink.server.exceptions.DocumentProcessingException;
+import com.paperlink.server.services.KnowledgeSourceService;
 import com.paperlink.server.services.aws.LambdaService;
 import com.paperlink.server.services.aws.S3Service;
-import com.paperlink.server.services.vector.VectorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;

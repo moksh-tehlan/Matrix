@@ -7,6 +7,7 @@ import com.paperlink.server.utils.DocumentListDeserializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class VectorService {
 
             stopWatch.stop();
             log.info("Successfully added {} documents to vector store in {} ms",
-                    documentList.size(), stopWatch.getLastTaskTimeMillis());
+                    documentList.size(), stopWatch.lastTaskInfo().getTimeMillis());
         } catch (Exception e) {
             log.error("Error adding documents to vector store: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to add documents to vector store", e);
@@ -66,7 +67,9 @@ public class VectorService {
 
         try {
             String response = chatClient.prompt()
-                    .advisors(advisor -> advisor.param("chat_memory_conversation_id", conversationId))
+                    .system("always reply in hindi language no matter what")
+                    .advisors(advisor -> advisor.param(MessageChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, conversationId))
+                    .advisors(advisor -> advisor.param(MessageChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 20))
                     .user(query)
                     .call()
                     .content();

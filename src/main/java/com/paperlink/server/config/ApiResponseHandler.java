@@ -10,6 +10,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
@@ -25,8 +27,11 @@ public class ApiResponseHandler implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        // Apply this advice to all controller methods except those already returning ApiResponse
-        return !returnType.getParameterType().equals(ApiResponse.class);
+        // Skip wrapping for ApiResponse objects and SpringDoc endpoints
+        String requestURI = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getRequestURI();
+        return !returnType.getParameterType().equals(ApiResponse.class) &&
+                !requestURI.contains("/v3/api-docs") &&
+                !requestURI.contains("/swagger-ui");
     }
 
     @Override

@@ -1,9 +1,10 @@
-package com.paperlink.server.services;
+package com.paperlink.server.services.vector;
 
 
 import com.paperlink.server.dtos.enums.ProcessingStatus;
 import com.paperlink.server.entities.KnowledgeSourceEntity;
 import com.paperlink.server.exceptions.DocumentProcessingException;
+import com.paperlink.server.services.KnowledgeSourceService;
 import com.paperlink.server.services.aws.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

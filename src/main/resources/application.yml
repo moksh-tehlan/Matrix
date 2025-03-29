@@ -19,7 +19,7 @@ spring:
   # JPA configuration
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -63,10 +63,20 @@ paperlink:
   ai:
     system-prompt: "You are a helpful assistant for PaperLink. Use the provided documents to answer questions accurately."
 
+springdoc:
+  packages-to-scan: com.paperlink.server
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+  paths-to-match: /v1/**
+
 # Logging configuration
 logging:
   level:
     root: ${LOG_LEVEL:INFO}
+    org.springdoc: ${DOC_LOG_LEVEL:INFO}
     com.paperlink: ${APP_LOG_LEVEL:INFO}
     org.springframework.ai: ${AI_LOG_LEVEL:INFO}
   pattern:
