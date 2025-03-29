@@ -1,6 +1,5 @@
 package com.paperlink.server.utils;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -16,7 +15,7 @@ import java.util.Map;
 
 public class DocumentListDeserializer extends JsonDeserializer<List<Document>> {
     @Override
-    public List<Document> deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException, JacksonException {
+    public List<Document> deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
         JsonNode rootNode = mapper.readTree(jsonParser);
         List<Document> documents = new ArrayList<>();
