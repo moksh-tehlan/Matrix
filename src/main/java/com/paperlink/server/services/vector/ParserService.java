@@ -72,6 +72,7 @@ public class ParserService {
             startTime = System.currentTimeMillis();
             byte[] fileContent = s3Service.downloadFile(bucketName, lambdaResponseDto.getS3Key());
             List<Document> documentList = vectorService.documentListFromJson(fileContent);
+            knowledgeSourceService.updateChunkCount(knowledgeSourceId, documentList.size());
 
             long documentListTime = System.currentTimeMillis();
             log.info("Document list processing for {} documents took {} ms",
@@ -88,6 +89,7 @@ public class ParserService {
         } catch (Exception e) {
             log.error("Failed to process document: {}", e.getMessage(), e);
             knowledgeSourceService.updateKnowledgeSourceStatus(knowledgeSourceId, ProcessingStatus.FAILED);
+            knowledgeSourceService.updateKnowledgeSourceError(knowledgeSourceId, e.getMessage());
             throw new DocumentProcessingException("Failed to process document: " + e.getMessage(), e);
         }
     }

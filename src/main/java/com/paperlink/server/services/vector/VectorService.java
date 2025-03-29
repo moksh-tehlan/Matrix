@@ -67,7 +67,6 @@ public class VectorService {
 
         try {
             String response = chatClient.prompt()
-                    .system("always reply in hindi language no matter what")
                     .advisors(advisor -> advisor.param(MessageChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, conversationId))
                     .advisors(advisor -> advisor.param(MessageChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY, 20))
                     .user(query)
