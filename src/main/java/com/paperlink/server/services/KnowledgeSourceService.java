@@ -59,7 +59,7 @@ public class KnowledgeSourceService {
      * @throws ResourceNotFoundException if knowledge source is not found
      */
     @Transactional
-    public void updateKnowledgeSourceStatus(String id, ProcessingStatus status) {
+    public KnowledgeSourceEntity updateKnowledgeSourceStatus(String id, ProcessingStatus status) {
         log.debug("Updating knowledge source status: id={}, status={}", id, status);
 
         KnowledgeSourceEntity knowledgeSource = getKnowledgeSource(id);
@@ -69,7 +69,7 @@ public class KnowledgeSourceService {
             knowledgeSource.setErrorMessage("Processing failed");
         }
 
-        saveKnowledgeSource(knowledgeSource);
+        return saveKnowledgeSource(knowledgeSource);
     }
 
     /**
@@ -119,7 +119,6 @@ public class KnowledgeSourceService {
      *
      * @param id         Knowledge source ID
      * @param chunkCount Number of chunks
-     * @return Updated knowledge source
      * @throws ResourceNotFoundException if knowledge source is not found
      */
     @Transactional

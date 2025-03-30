@@ -90,7 +90,6 @@ public class ParserService {
             log.error("Failed to process document: {}", e.getMessage(), e);
             knowledgeSourceService.updateKnowledgeSourceStatus(knowledgeSourceId, ProcessingStatus.FAILED);
             knowledgeSourceService.updateKnowledgeSourceError(knowledgeSourceId, e.getMessage());
-            throw new DocumentProcessingException("Failed to process document: " + e.getMessage(), e);
         }
     }
 }

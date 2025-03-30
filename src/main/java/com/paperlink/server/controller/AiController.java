@@ -4,8 +4,8 @@ package com.paperlink.server.controller;
 import com.paperlink.server.dtos.requests.ChatRequestDto;
 import com.paperlink.server.dtos.response.ChatResponseDto;
 import com.paperlink.server.entities.KnowledgeSourceEntity;
-import com.paperlink.server.services.vector.DocumentService;
 import com.paperlink.server.services.KnowledgeSourceService;
+import com.paperlink.server.services.vector.DocumentService;
 import com.paperlink.server.services.vector.VectorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,9 +42,9 @@ public class AiController {
             }
     )
     @PostMapping("/chat")
-    public ResponseEntity<ChatResponseDto> chat(@RequestBody ChatRequestDto request) {
+    public ChatResponseDto chat(@RequestBody ChatRequestDto request) {
         String response = vectorService.getResponse(request.getQuery(), request.getConversationId());
-        return ResponseEntity.ok(new ChatResponseDto(response));
+        return new ChatResponseDto(response);
     }
 
     @Operation(
@@ -61,10 +60,10 @@ public class AiController {
             }
     )
     @PostMapping(value = "/documents/upload")
-    public ResponseEntity<List<KnowledgeSourceEntity>> uploadFiles(
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<KnowledgeSourceEntity> uploadFiles(
             @RequestParam("files") List<MultipartFile> files) {
-        List<KnowledgeSourceEntity> response = documentService.uploadDocumentAndParseIt(files);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return documentService.uploadDocumentAndParseIt(files);
     }
 
     @Operation(
@@ -79,8 +78,7 @@ public class AiController {
             }
     )
     @GetMapping("/documents/{id}/status")
-    public ResponseEntity<KnowledgeSourceEntity> getDocumentStatus(@PathVariable String id) {
-        KnowledgeSourceEntity knowledgeSource = knowledgeSourceService.getKnowledgeSource(id);
-        return ResponseEntity.ok(knowledgeSource);
+    public KnowledgeSourceEntity getDocumentStatus(@PathVariable String id) {
+        return knowledgeSourceService.getKnowledgeSource(id);
     }
 }

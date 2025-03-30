@@ -1,6 +1,7 @@
 package com.paperlink.server.config;
 
 import com.paperlink.server.dtos.response.ApiResponse;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -26,22 +27,35 @@ public class ApiResponseHandler implements ResponseBodyAdvice<Object> {
     private final StringToJsonConverter stringToJsonConverter;
 
     @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        // Skip wrapping for ApiResponse objects and SpringDoc endpoints
-        String requestURI = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getRequestURI();
-        return !returnType.getParameterType().equals(ApiResponse.class) &&
-                !requestURI.contains("/v3/api-docs") &&
-                !requestURI.contains("/swagger-ui");
+    public boolean supports(MethodParameter returnType, @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
+        // First check if the return type is already an ApiResponse to avoid wrapping
+        if (returnType.getParameterType().equals(ApiResponse.class)) {
+            return false;
+        }
+
+        // Safely check request URI to skip Swagger/OpenAPI endpoints
+        ServletRequestAttributes requestAttributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if (requestAttributes != null) {
+            String requestURI = requestAttributes.getRequest().getRequestURI();
+            return !requestURI.contains("/v3/api-docs") &&
+                    !requestURI.contains("/swagger-ui");
+        }
+
+        // If we can't determine the request URI, default to not wrapping the response
+        // to avoid potential issues
+        return false;
     }
 
     @Override
     public Object beforeBodyWrite(
             Object body,
-            MethodParameter returnType,
-            MediaType selectedContentType,
-            Class<? extends HttpMessageConverter<?>> selectedConverterType,
-            ServerHttpRequest request,
-            ServerHttpResponse response) {
+            @NonNull MethodParameter returnType,
+            @NonNull MediaType selectedContentType,
+            @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
+            @NonNull ServerHttpRequest request,
+            @NonNull ServerHttpResponse response) {
 
         // Skip processing for specific cases like error responses already handled by exception handler
         if (body instanceof ApiResponse) {
