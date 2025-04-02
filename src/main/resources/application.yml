@@ -56,6 +56,9 @@ spring:
         access-key: ${AWS_ACCESS_KEY}
         secret-key: ${AWS_SECRET_KEY}
 
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
+
 # Application-specific configuration
 paperlink:
   s3:

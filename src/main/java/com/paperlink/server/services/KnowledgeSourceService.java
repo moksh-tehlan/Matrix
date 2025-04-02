@@ -111,7 +111,7 @@ public class KnowledgeSourceService {
     @Transactional(readOnly = true)
     public List<KnowledgeSourceEntity> getKnowledgeSourcesByUser(UserEntity user) {
         log.debug("Fetching knowledge sources for user: {}", user.getId());
-        return knowledgeSourceRepository.findByUser(user);
+        return knowledgeSourceRepository.findByUploadedBy(user);
     }
 
     /**

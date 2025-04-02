@@ -4,6 +4,7 @@ package com.paperlink.server.controller;
 import com.paperlink.server.dtos.requests.ChatRequestDto;
 import com.paperlink.server.dtos.response.ChatResponseDto;
 import com.paperlink.server.entities.KnowledgeSourceEntity;
+import com.paperlink.server.exceptions.ErrorResponse;
 import com.paperlink.server.services.KnowledgeSourceService;
 import com.paperlink.server.services.vector.DocumentService;
 import com.paperlink.server.services.vector.VectorService;
@@ -38,7 +39,7 @@ public class AiController {
                             description = "Successful query",
                             content = @Content(schema = @Schema(implementation = ChatResponseDto.class))
                     ),
-                    @ApiResponse(responseCode = "500", description = "Server error")
+                    @ApiResponse(responseCode = "500", description = "Server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PostMapping("/chat")
@@ -55,8 +56,8 @@ public class AiController {
                             responseCode = "201",
                             description = "Documents uploaded successfully"
                     ),
-                    @ApiResponse(responseCode = "400", description = "Invalid file format"),
-                    @ApiResponse(responseCode = "500", description = "Server error")
+                    @ApiResponse(responseCode = "400", description = "Invalid file format", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "Server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @PostMapping(value = "/documents/upload")
@@ -74,7 +75,7 @@ public class AiController {
                             responseCode = "200",
                             description = "Status retrieved successfully"
                     ),
-                    @ApiResponse(responseCode = "404", description = "Document not found")
+                    @ApiResponse(responseCode = "404", description = "Document not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             }
     )
     @GetMapping("/documents/{id}/status")

@@ -1,10 +1,7 @@
 package com.paperlink.server.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.ai.chat.messages.MessageType;
 
 @Data
@@ -13,6 +10,8 @@ import org.springframework.ai.chat.messages.MessageType;
 @Table(name = "chats")
 @Builder
 @AllArgsConstructor
+@ToString(callSuper=true)
+@EqualsAndHashCode(callSuper=true)
 public class ChatEntity extends BaseEntity {
 
     @Id
