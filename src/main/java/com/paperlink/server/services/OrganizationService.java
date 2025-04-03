@@ -7,13 +7,18 @@ import com.paperlink.server.exceptions.DuplicateResourceException;
 import com.paperlink.server.exceptions.ResourceNotFoundException;
 import com.paperlink.server.repositories.OrganizationRepository;
 import com.paperlink.server.repositories.SlackWorkspaceRepository;
-import jakarta.transaction.Transactional;
+import com.paperlink.server.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service for managing organizations
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -37,15 +42,16 @@ public class OrganizationService {
         organization.setVerificationToken(UUID.randomUUID().toString());
         organization.setActive(true);
 
-        // Format subdomain (lowercase, remove spaces, etc.)
-        String formattedSubdomain = formatSubdomain(organization.getName());
+        // Format subdomain
+        String formattedSubdomain = StringUtils.formatSubdomain(organization.getName());
         organization.setSubdomain(formattedSubdomain);
 
-        // Save the admin
-        adminUser.setVerified(true);
-        userService.createUser(adminUser);
-        // Save the organization
+        // Save the organization first
         OrganizationEntity savedOrg = organizationRepository.save(organization);
+
+        // Set organization reference on user and save
+        adminUser.setOrganization(savedOrg);
+        userService.createUser(adminUser);
 
         log.info("Organization created successfully with ID: {}", savedOrg.getId());
         return savedOrg;
@@ -58,6 +64,7 @@ public class OrganizationService {
      * @param slackWorkspace Slack workspace details
      * @return Updated organization
      * @throws ResourceNotFoundException if organization is not found
+     * @throws DuplicateResourceException if workspace is already connected to another organization
      */
     @Transactional
     public OrganizationEntity connectSlackWorkspace(String organizationId, SlackWorkspaceEntity slackWorkspace) {
@@ -71,8 +78,10 @@ public class OrganizationService {
                     }
                 });
 
+        // Set organization reference on workspace
         slackWorkspace.setOrganization(organization);
 
+        // Save workspace and update organization reference
         SlackWorkspaceEntity savedWorkspace = slackWorkspaceRepository.save(slackWorkspace);
         organization.setSlackWorkspace(savedWorkspace);
 
@@ -87,21 +96,68 @@ public class OrganizationService {
      * @return The organization entity
      * @throws ResourceNotFoundException if organization is not found
      */
+    @Transactional(readOnly = true)
     public OrganizationEntity findById(String id) {
         return organizationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with ID: " + id));
     }
 
     /**
-     * Format a string to be used as a subdomain
+     * Find all organizations
      *
-     * @param name Name to format
-     * @return Formatted subdomain
+     * @return List of all organizations
      */
-    private String formatSubdomain(String name) {
-        return name.toLowerCase()
-                .replaceAll("[^a-z0-9]", "")
-                .replaceAll("\\s+", "");
+    @Transactional(readOnly = true)
+    public List<OrganizationEntity> findAll() {
+        return organizationRepository.findAll();
     }
 
+    /**
+     * Update an organization
+     *
+     * @param id Organization ID
+     * @param organizationDetails Updated organization details
+     * @return The updated organization
+     * @throws ResourceNotFoundException if organization is not found
+     */
+    @Transactional
+    public OrganizationEntity updateOrganization(String id, OrganizationEntity organizationDetails) {
+        OrganizationEntity organization = findById(id);
+
+        // Update fields
+        organization.setName(organizationDetails.getName());
+        organization.setContactEmail(organizationDetails.getContactEmail());
+        organization.setDescription(organizationDetails.getDescription());
+        organization.setActive(organizationDetails.isActive());
+
+        return organizationRepository.save(organization);
+    }
+
+    /**
+     * Activate or deactivate an organization
+     *
+     * @param id Organization ID
+     * @param active Active status
+     * @return The updated organization
+     * @throws ResourceNotFoundException if organization is not found
+     */
+    @Transactional
+    public OrganizationEntity setActiveStatus(String id, boolean active) {
+        OrganizationEntity organization = findById(id);
+        organization.setActive(active);
+        return organizationRepository.save(organization);
+    }
+
+    /**
+     * Delete an organization
+     *
+     * @param id Organization ID
+     * @throws ResourceNotFoundException if organization is not found
+     */
+    @Transactional
+    public void deleteOrganization(String id) {
+        OrganizationEntity organization = findById(id);
+        organizationRepository.delete(organization);
+        log.info("Organization deleted: {}", id);
+    }
 }

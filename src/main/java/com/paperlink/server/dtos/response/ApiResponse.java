@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Map;
 
 /**
  * Standard API response wrapper for consistent API output
@@ -32,13 +34,16 @@ public class ApiResponse<T> {
 
     // Timestamp of the response
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private LocalDateTime timestamp = LocalDateTime.now(ZoneOffset.UTC);
 
     // Error details, included only in error responses
     private String error;
 
     // Path that triggered the error
     private String path;
+
+    // Validation errors, included only when validation fails
+    private Map<String, String> validationErrors;
 
     /**
      * Constructor for success responses
@@ -52,7 +57,7 @@ public class ApiResponse<T> {
         this.message = message;
         this.data = data;
         this.status = status;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     /**
@@ -69,7 +74,26 @@ public class ApiResponse<T> {
         this.status = status;
         this.error = error;
         this.path = path;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
+    }
+
+    /**
+     * Constructor for validation error responses
+     * @param success Success flag
+     * @param message Status message
+     * @param status HTTP status code
+     * @param error Error details
+     * @param path Path that triggered the error
+     * @param validationErrors Map of field names to error messages
+     */
+    public ApiResponse(boolean success, String message, int status, String error, String path, Map<String, String> validationErrors) {
+        this.success = success;
+        this.message = message;
+        this.status = status;
+        this.error = error;
+        this.path = path;
+        this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
+        this.validationErrors = validationErrors;
     }
 
     /**
@@ -95,5 +119,19 @@ public class ApiResponse<T> {
      */
     public static <T> ApiResponse<T> error(String message, int status, String error, String path) {
         return new ApiResponse<>(false, message, status, error, path);
+    }
+
+    /**
+     * Static factory method for validation error responses
+     * @param message Status message
+     * @param status HTTP status code
+     * @param error Error details
+     * @param path Path that triggered the error
+     * @param validationErrors Map of field names to error messages
+     * @return ApiResponse instance
+     * @param <T> Type of data
+     */
+    public static <T> ApiResponse<T> error(String message, int status, String error, String path, Map<String, String> validationErrors) {
+        return new ApiResponse<>(false, message, status, error, path, validationErrors);
     }
 }
