@@ -39,6 +39,9 @@ public class OrganizationEntity extends BaseEntity {
     @Column(name = "verification_token")
     private String verificationToken;
 
+    @OneToOne(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private SlackWorkspaceEntity slackWorkspace;
+
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<UserEntity> users = new ArrayList<>();

@@ -30,6 +30,10 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        // Allow Slack endpoints without authentication
+                        .requestMatchers("/v1/slack/**").permitAll()
+                        .requestMatchers("/v1/organization/**").permitAll()
+                        .requestMatchers("/v1/admin/test-slack-integration").permitAll()
                         .anyRequest()
                         .authenticated()
                 )
