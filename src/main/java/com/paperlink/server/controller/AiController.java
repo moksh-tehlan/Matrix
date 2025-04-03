@@ -1,7 +1,7 @@
 package com.paperlink.server.controller;
 
 
-import com.paperlink.server.dtos.requests.ChatRequestDto;
+import com.paperlink.server.dtos.requests.ChatRequest;
 import com.paperlink.server.dtos.response.ChatResponseDto;
 import com.paperlink.server.entities.KnowledgeSourceEntity;
 import com.paperlink.server.exceptions.ErrorResponse;
@@ -43,7 +43,7 @@ public class AiController {
             }
     )
     @PostMapping("/chat")
-    public ChatResponseDto chat(@RequestBody ChatRequestDto request) {
+    public ChatResponseDto chat(@RequestBody ChatRequest request) {
         String response = vectorService.getResponse(request.getQuery(), request.getConversationId());
         return new ChatResponseDto(response);
     }

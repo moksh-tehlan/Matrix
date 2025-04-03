@@ -3,6 +3,7 @@ package com.paperlink.server.services.vector;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.paperlink.server.exceptions.VectorStoreException;
 import com.paperlink.server.utils.DocumentListDeserializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,32 +29,36 @@ public class VectorService {
 
 
     /**
-     * Add documents to the vector store
+     * Add documents to the vector store for embedding and indexing.
      *
-     * @param documentList List of documents to add
+     * @param documentList List of documents to add to the vector store
+     * @throws VectorStoreException if there's an error adding documents to the vector store
      */
     public void addVectorData(List<Document> documentList) {
+        // Validate input
         if (documentList == null || documentList.isEmpty()) {
             log.warn("No documents provided to add to vector store");
             return;
         }
 
-        StopWatch stopWatch = new StopWatch();
+        // Track performance
+        StopWatch stopWatch = new StopWatch("vectorStoreAddition");
         stopWatch.start("addVectorData");
         log.info("Adding {} documents to vector store", documentList.size());
 
         try {
+            // Add documents to vector store
             vectorStore.add(documentList);
 
+            // Log performance metrics
             stopWatch.stop();
             log.info("Successfully added {} documents to vector store in {} ms",
                     documentList.size(), stopWatch.lastTaskInfo().getTimeMillis());
         } catch (Exception e) {
             log.error("Error adding documents to vector store: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to add documents to vector store", e);
+            throw new VectorStoreException("Failed to add documents to vector store", e);
         }
     }
-
     /**
      * Get response from AI model with conversation tracking
      *
