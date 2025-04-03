@@ -15,5 +15,5 @@ public interface KnowledgeSourceRepository extends JpaRepository<KnowledgeSource
      * @param user The user
      * @return List of knowledge sources
      */
-    List<KnowledgeSourceEntity> findByUser(UserEntity user);
+    List<KnowledgeSourceEntity> findByUploadedBy(UserEntity user);
 }

@@ -2,16 +2,15 @@ package com.paperlink.server.entities;
 
 import com.paperlink.server.dtos.enums.ProcessingStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "knowledge_source")
 @Builder
 @AllArgsConstructor
 @Data
+@ToString(callSuper=true)
+@EqualsAndHashCode(callSuper=true)
 @NoArgsConstructor
 public class KnowledgeSourceEntity extends BaseEntity {
 
@@ -44,5 +43,9 @@ public class KnowledgeSourceEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserEntity user;
+    private UserEntity uploadedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id")
+    private OrganizationEntity organization;
 }

@@ -1,28 +1,40 @@
 plugins {
-    // Apply the Java plugin
     id 'java'
-    // Apply the Spring Boot plugin
     id 'org.springframework.boot' version '3.4.3'
-    // Apply the Spring dependency management plugin
     id 'io.spring.dependency-management' version '1.1.7'
-    // Jacoco for test coverage
     id 'jacoco'
-    // Spotless for code formatting
     id 'com.diffplug.spotless' version '6.25.0'
 }
 
+// Project metadata
 group = 'com.paperlink'
 version = '0.1.0'
-sourceCompatibility = '17'
 
+// Dependency versions
+ext {
+    springAiVersion = '1.0.0-M6'
+    awsSdkVersion = '2.21.1'
+    openApiVersion = '2.8.5'
+    jwtVersion = '0.12.6'
+    awsSpringCloudVersion = '3.0.3'
+    modelMapperVersion = '3.2.2'
+    slackSdk = '1.45.3'
+}
+
+// Java configuration
 java {
+    sourceCompatibility = '17'
     toolchain {
-        // Set the Java language version to 17
         languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
-// Configuration for Spotless
+// Repository configuration
+repositories {
+    mavenCentral()
+}
+
+// Spotless configuration
 spotless {
     java {
         importOrder()
@@ -34,58 +46,60 @@ spotless {
     }
 }
 
-// Define versions
-ext {
-    set('springAiVersion', "1.0.0-M6")
-    set('awsSdkVersion', "2.21.1")
-    set('openApiVersion', "2.8.5")
-}
-
-repositories {
-    // Use Maven Central repository
-    mavenCentral()
-}
-
+// Dependencies grouped by purpose
 dependencies {
-    // Spring Boot dependencies
+    // Spring Boot core
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // Spring AI dependencies
+    // Spring AI
     implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
     implementation 'org.springframework.ai:spring-ai-pgvector-store-spring-boot-starter'
     implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
 
-    // AWS dependencies
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter:3.0.3'
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.3'
-
-    // AWS SDK dependencies
+    // AWS
+    implementation "io.awspring.cloud:spring-cloud-aws-starter:${awsSpringCloudVersion}"
+    implementation "io.awspring.cloud:spring-cloud-aws-starter-s3:${awsSpringCloudVersion}"
     implementation platform("software.amazon.awssdk:bom:${awsSdkVersion}")
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:lambda'
 
-    // Spring Retry
+    // Resiliency
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'
 
-    // OpenAPI documentation
+    // Documentation
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
 
-    // Lombok for reducing boilerplate code
+    // Authentication
+    implementation "io.jsonwebtoken:jjwt:${jwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-impl:${jwtVersion}"
+    implementation "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"
+
+    // Utilities
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Development-only dependencies
+    // Database
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Slack API SDK
+    implementation "com.slack.api:slack-api-client:${slackSdk}"
+    implementation "com.slack.api:slack-app-backend:${slackSdk}"
+
+    // Thymeleaf for HTML templates
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
+    // Development tools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     developmentOnly 'org.springframework.ai:spring-ai-spring-boot-docker-compose'
 
-    // Runtime dependencies
-    runtimeOnly 'org.postgresql:postgresql'
-
-    // Testing dependencies
+    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.mockito:mockito-core'
@@ -93,18 +107,20 @@ dependencies {
     testImplementation 'com.h2database:h2'
 }
 
+// Spring AI BOM
 dependencyManagement {
     imports {
         mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
     }
 }
 
+// Test configuration
 test {
-    // Use JUnit Platform for testing
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
 
+// JaCoCo configuration
 jacocoTestReport {
     dependsOn test
     reports {
@@ -113,7 +129,7 @@ jacocoTestReport {
     }
 }
 
-// Task to create build information
+// Spring Boot build info
 springBoot {
     buildInfo()
 }

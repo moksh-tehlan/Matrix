@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect to Slack - PaperLink</title>
+    <style>
+        .slack-integration-container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 800px;
+            margin: 20px auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .slack-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .slack-header h2 {
+            color: #3f3f3f;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .slack-header p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .slack-benefits {
+            margin: 30px 0;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .benefit-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            color: #4CAF50;
+        }
+
+        .benefit-text {
+            flex: 1;
+        }
+
+        .benefit-text h4 {
+            margin: 0 0 5px;
+            color: #333;
+        }
+
+        .benefit-text p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .add-to-slack-btn {
+            display: block;
+            text-align: center;
+            margin: 30px auto;
+            transition: opacity 0.3s;
+        }
+
+        .add-to-slack-btn:hover {
+            opacity: 0.9;
+        }
+
+        .integration-status {
+            background-color: #e9f5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .integration-status.connected {
+            display: block;
+        }
+
+        .integration-status.error {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="slack-integration-container">
+    <div class="slack-header">
+        <h2>Connect PaperLink to Slack</h2>
+        <p>Enable your team to access your knowledge base directly from Slack. PaperLink's Slack integration allows
+            employees to query documents without leaving their workspace.</p>
+    </div>
+
+    <div class="slack-benefits">
+        <div class="benefit-item">
+            <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            <div class="benefit-text">
+                <h4>Instant Access</h4>
+                <p>Employees can instantly query your knowledge base without leaving Slack.</p>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+            </svg>
+            <div class="benefit-text">
+                <h4>No Additional Login</h4>
+                <p>Users are automatically identified by their Slack account - no extra authentication needed.</p>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <div class="benefit-text">
+                <h4>Real-time Updates</h4>
+                <p>As you add documents to your knowledge base, they become immediately searchable in Slack.</p>
+            </div>
+        </div>
+
+        <div class="benefit-item">
+            <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <div class="benefit-text">
+                <h4>Simple Commands</h4>
+                <p>Use slash commands like <code>/paperlink-search</code> or simply message the bot directly.</p>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" id="add-to-slack" class="add-to-slack-btn">
+        <img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png"
+             srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"/>
+    </a>
+
+    <div id="integration-status" class="integration-status">
+        <p id="status-message"></p>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const organizationId = /*[[${organizationId}]]*/ 'default-org-id';
+    const clientId = /*[[${slackClientId}]]*/ 'default-client-id';
+    const redirectUri = /*[[${slackRedirectUri}]]*/ 'default-redirect-uri';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set the Add to Slack button URL
+        const slackAuthUrl = `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=chat:write,commands,team:read,users:read&redirect_uri=${encodeURIComponent(redirectUri)}&state=${organizationId}`;
+        document.getElementById('add-to-slack').href = slackAuthUrl;
+
+        // Check if already connected
+        checkSlackConnection(organizationId);
+    });
+
+    function checkSlackConnection(organizationId) {
+        fetch(`/api/v1/organizations/${organizationId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data.slackWorkspace) {
+                    // Already connected to Slack
+                    const statusDiv = document.getElementById('integration-status');
+                    const statusMsg = document.getElementById('status-message');
+                    statusDiv.classList.add('connected');
+                    statusMsg.textContent = `Connected to Slack workspace: ${data.data.slackWorkspace.workspaceName}`;
+
+                    // Optionally hide the Add to Slack button
+                    document.getElementById('add-to-slack').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking Slack connection:', error);
+            });
+    }
+
+    /*]]>*/
+</script>
+</body>
+</html>
+

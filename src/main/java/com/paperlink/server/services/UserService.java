@@ -5,6 +5,9 @@ import com.paperlink.server.exceptions.UserNotFoundException;
 import com.paperlink.server.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     /**
@@ -25,8 +28,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public UserEntity findById(String id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
     }
 
     /**
@@ -78,5 +80,17 @@ public class UserService {
     public void deleteUser(String id) {
         UserEntity user = findById(id);
         userRepository.delete(user);
+    }
+
+    /**
+     * Load user by username
+     *
+     * @param username Username of the user
+     * @return UserDetails of the user
+     * @throws UsernameNotFoundException if user is not found
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
     }
 }

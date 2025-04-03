@@ -16,6 +16,11 @@ spring:
       idle-timeout: 30000
       connection-timeout: 20000
 
+  thymeleaf:
+    cache: false  # Set to true in production
+    prefix: classpath:/templates/
+    suffix: .html
+
   # JPA configuration
   jpa:
     hibernate:
@@ -56,12 +61,27 @@ spring:
         access-key: ${AWS_ACCESS_KEY}
         secret-key: ${AWS_SECRET_KEY}
 
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
+
 # Application-specific configuration
 paperlink:
   s3:
     bucket-name: ${S3_BUCKET_NAME:paperaitest}
   ai:
     system-prompt: "You are a helpful assistant for PaperLink. Use the provided documents to answer questions accurately."
+
+# Slack integration configuration
+slack:
+  client:
+    id: ${SLACK_CLIENT_ID}
+    secret: ${SLACK_CLIENT_SECRET}
+  redirect:
+    uri: ${SLACK_REDIRECT_URI:https://your-domain.com/api/v1/slack/oauth/callback}
+  signing:
+    secret: ${SLACK_SIGNING_SECRET}
+  verification:
+    token: ${SLACK_VERIFICATION_TOKEN}
 
 springdoc:
   packages-to-scan: com.paperlink.server
