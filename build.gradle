@@ -87,8 +87,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 
     // Slack API SDK
-    implementation "com.slack.api:slack-api-client:${slackSdk}"
-    implementation "com.slack.api:slack-app-backend:${slackSdk}"
+    implementation "com.slack.api:bolt:${slackSdk}"
 
     // Thymeleaf for HTML templates
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'

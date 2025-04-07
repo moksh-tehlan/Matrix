@@ -73,10 +73,10 @@ public class SlackEventService {
             SlackUserEntity slackUser = slackUserService.getOrCreateSlackUser(userId, workspace.getId());
 
             // Use vector service to get response
-            String response = vectorService.getResponse(text, slackUser.getId());
+//            String response = vectorService.getResponse(text, slackUser.getId());
 
             // Send response back to channel
-            slackMessageService.sendMessage(channel, workspace.getId(), response);
+            slackMessageService.sendMessage(channel, workspace.getId(), "response");
             return true;
 
         } catch (Exception e) {
