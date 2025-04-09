@@ -1,6 +1,5 @@
 package com.paperlink.server.entities;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,29 +12,29 @@ import lombok.*;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class SlackWorkspaceEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column(name = "workspace_id", nullable = false, unique = true)
-    private String workspaceId;
+  @Column(name = "workspace_id", nullable = false, unique = true)
+  private String workspaceId;
 
-    @Column(name = "workspace_name")
-    private String workspaceName;
+  @Column(name = "workspace_name")
+  private String workspaceName;
 
-    @Column(name = "access_token", columnDefinition = "TEXT")
-    private String accessToken;
+  @Column(name = "access_token", columnDefinition = "TEXT")
+  private String accessToken;
 
-    @Column(name = "bot_token", columnDefinition = "TEXT")
-    private String botToken;
+  @Column(name = "bot_token", columnDefinition = "TEXT")
+  private String botToken;
 
-    @Column(name = "bot_user_id")
-    private String botUserId;
+  @Column(name = "bot_user_id")
+  private String botUserId;
 
-    @Column(name = "team_name")
-    private String teamName;
+  @Column(name = "team_name")
+  private String teamName;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id", nullable = false)
-    private OrganizationEntity organization;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "organization_id", nullable = false)
+  private OrganizationEntity organization;
 }

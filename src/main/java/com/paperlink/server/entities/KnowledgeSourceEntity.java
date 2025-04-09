@@ -9,43 +9,42 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @Data
-@ToString(callSuper=true)
-@EqualsAndHashCode(callSuper=true)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class KnowledgeSourceEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column(name = "processing_status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProcessingStatus processingStatus;
+  @Column(name = "processing_status", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private ProcessingStatus processingStatus;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+  @Column(name = "name", nullable = false)
+  private String name;
 
-    @Column(name = "path", nullable = false)
-    private String path;
+  @Column(name = "path", nullable = false)
+  private String path;
 
-    @Column(name = "file_size")
-    private Long fileSize;
+  @Column(name = "file_size")
+  private Long fileSize;
 
-    @Column(name = "mime_type")
-    private String mimeType;
+  @Column(name = "mime_type")
+  private String mimeType;
 
+  @Column(name = "chunk_count")
+  private Integer chunkCount;
 
-    @Column(name = "chunk_count")
-    private Integer chunkCount;
+  @Column(name = "error_message", columnDefinition = "TEXT")
+  private String errorMessage;
 
-    @Column(name = "error_message", columnDefinition = "TEXT")
-    private String errorMessage;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private UserEntity uploadedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity uploadedBy;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id")
-    private OrganizationEntity organization;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "organization_id")
+  private OrganizationEntity organization;
 }
