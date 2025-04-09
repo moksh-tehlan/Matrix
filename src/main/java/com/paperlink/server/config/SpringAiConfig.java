@@ -15,39 +15,38 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SpringAiConfig {
 
-    /**
-     * Configures the ChatClient with necessary advisors for RAG
-     *
-     * @param chatClientBuilder The builder for the ChatClient
-     * @param vectorStore The vector store for RAG
-     * @param chatMemoryService Service for managing chat memory
-     * @return Configured ChatClient
-     */
-    @Bean
-    public ChatClient chatClient(
-            ChatClient.Builder chatClientBuilder,
-            VectorStore vectorStore,
-            ChatMemoryService chatMemoryService) {
+  /**
+   * Configures the ChatClient with necessary advisors for RAG
+   *
+   * @param chatClientBuilder The builder for the ChatClient
+   * @param vectorStore The vector store for RAG
+   * @param chatMemoryService Service for managing chat memory
+   * @return Configured ChatClient
+   */
+  @Bean
+  public ChatClient chatClient(
+      ChatClient.Builder chatClientBuilder,
+      VectorStore vectorStore,
+      ChatMemoryService chatMemoryService) {
 
-        // Configure vector search request
-        SearchRequest searchRequest = SearchRequest.builder()
-                .topK(5)
-                .build();
+    // Configure vector search request
+    SearchRequest searchRequest = SearchRequest.builder().topK(5).build();
 
-        return chatClientBuilder.defaultAdvisors(
-                new SimpleLoggerAdvisor(),
-                new MessageChatMemoryAdvisor(chatMemoryService),
-                new QuestionAnswerAdvisor(vectorStore, searchRequest)
-        ).build();
-    }
+    return chatClientBuilder
+        .defaultAdvisors(
+            new SimpleLoggerAdvisor(),
+            new MessageChatMemoryAdvisor(chatMemoryService),
+            new QuestionAnswerAdvisor(vectorStore, searchRequest))
+        .build();
+  }
 
-    /**
-     * Configures the batching strategy for embeddings
-     *
-     * @return BatchingStrategy for token-based batching
-     */
-    @Bean
-    public BatchingStrategy embeddingBatchingStrategy() {
-        return new TokenCountBatchingStrategy();
-    }
+  /**
+   * Configures the batching strategy for embeddings
+   *
+   * @return BatchingStrategy for token-based batching
+   */
+  @Bean
+  public BatchingStrategy embeddingBatchingStrategy() {
+    return new TokenCountBatchingStrategy();
+  }
 }

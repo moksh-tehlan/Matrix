@@ -11,8 +11,7 @@ import lombok.Setter;
 @Data
 @AllArgsConstructor
 public class ErrorResponse {
-    private int status;
-    private String message;
-    private long timestamp;
+  private int status;
+  private String message;
+  private long timestamp;
 }
-

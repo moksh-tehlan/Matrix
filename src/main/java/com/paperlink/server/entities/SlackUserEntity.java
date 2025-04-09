@@ -12,19 +12,19 @@ import lombok.*;
 @Table(name = "slack_users")
 @Builder
 public class SlackUserEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    private String username;
+  private String username;
 
-    private String slackUserId;
+  private String slackUserId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workspace_id", nullable = false)
-    private SlackWorkspaceEntity workspace;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "workspace_id", nullable = false)
+  private SlackWorkspaceEntity workspace;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id", nullable = false)
-    private OrganizationEntity organization;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "organization_id", nullable = false)
+  private OrganizationEntity organization;
 }
